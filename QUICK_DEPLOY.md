@@ -26,14 +26,26 @@
 ### 4. Настройте переменные окружения
 В Railway панели → **Variables** → добавьте:
 
+**Обязательные:**
 ```
 BOT_TOKEN=YOUR_TELEGRAM_BOT_TOKEN
 OPENAI_API_KEY=YOUR_OPENAI_API_KEY
+```
+
+**Дополнительные (рекомендуемые):**
+```
 OPENAI_MODEL=gpt-4.1-mini
 MAX_OPTIONS=5
 RESPONSE_TIMEOUT=30
 LOG_LEVEL=INFO
 ```
+
+**Для избежания конфликтов (optional):**
+```
+USE_WEBHOOK=true
+WEBHOOK_URL=https://YOUR-RAILWAY-DOMAIN.railway.app
+```
+*Замените YOUR-RAILWAY-DOMAIN на ваш реальный домен*
 
 ### 5. ✅ Готово!
 - Бот автоматически запустится

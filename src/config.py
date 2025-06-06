@@ -31,6 +31,11 @@ class Config(BaseSettings):
     # Bot Configuration
     max_options: int = Field(default=5, env="MAX_OPTIONS")
     response_timeout: int = Field(default=30, env="RESPONSE_TIMEOUT")
+    
+    # Deployment Configuration
+    use_webhook: bool = Field(default=False, env="USE_WEBHOOK")
+    webhook_url: str | None = Field(default=None, env="WEBHOOK_URL")
+    webhook_path: str = Field(default="/webhook", env="WEBHOOK_PATH")
 
     @field_validator("bot_token")
     @classmethod

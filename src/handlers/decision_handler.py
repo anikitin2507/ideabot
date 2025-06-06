@@ -88,7 +88,12 @@ class DecisionHandler:
         )
 
         # Send "thinking" reaction
-        await message.react("🤔")
+        try:
+            from aiogram.types import ReactionTypeEmoji
+            await message.react([ReactionTypeEmoji(emoji="🤔")])
+        except Exception as e:
+            # Skip reaction if not supported
+            logger.debug("Could not set reaction", error=str(e))
 
         # Parse options from message
         options = self.option_parser.parse_options(message.text)

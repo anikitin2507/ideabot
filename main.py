@@ -22,14 +22,16 @@ async def health_check(request):
 async def webhook_handler(request):
     """Handle webhook updates from Telegram."""
     import structlog
+
     logger = structlog.get_logger()
-    
+
     bot = request.app["bot"]
     dp = request.app["dispatcher"]
-    
+
     try:
         data = await request.json()
         from aiogram.types import Update
+
         update = Update(**data)
         await dp.feed_update(bot, update)
         return web.Response(status=200)
@@ -42,12 +44,12 @@ async def create_app(bot=None, dp=None, config=None) -> web.Application:
     """Create aiohttp application with health check and webhook."""
     app = web.Application()
     app.router.add_get("/health", health_check)
-    
+
     if bot and dp and config and config.use_webhook:
         app["bot"] = bot
         app["dispatcher"] = dp
         app.router.add_post(config.webhook_path, webhook_handler)
-    
+
     return app
 
 
@@ -83,7 +85,11 @@ async def main() -> None:
     decision_handler = DecisionHandler()
     dp.include_router(decision_handler.router)
 
-    logger.info("Starting Decision Bot", version="1.0.0", mode="webhook" if config.use_webhook else "polling")
+    logger.info(
+        "Starting Decision Bot",
+        version="1.0.0",
+        mode="webhook" if config.use_webhook else "polling",
+    )
 
     try:
         # Check for existing bot instances first
@@ -102,23 +108,23 @@ async def main() -> None:
             if not config.webhook_url:
                 logger.error("WEBHOOK_URL is required when USE_WEBHOOK=true")
                 raise ValueError("WEBHOOK_URL is required for webhook mode")
-            
+
             # Set webhook
             webhook_url = f"{config.webhook_url.rstrip('/')}{config.webhook_path}"
             await bot.set_webhook(
                 url=webhook_url,
                 drop_pending_updates=True,
-                allowed_updates=["message", "callback_query"]
+                allowed_updates=["message", "callback_query"],
             )
             logger.info("Webhook set", url=webhook_url)
-            
+
             # Start only web server
             runner = web.AppRunner(app)
             await runner.setup()
             site = web.TCPSite(runner, "0.0.0.0", 8000)
             await site.start()
             logger.info("Webhook server started on port 8000")
-            
+
             # Keep running
             while True:
                 await asyncio.sleep(1)
@@ -135,7 +141,7 @@ async def main() -> None:
             async def start_bot():
                 retry_count = 0
                 max_retries = 5
-                
+
                 while retry_count < max_retries:
                     try:
                         logger.info("Starting bot polling", attempt=retry_count + 1)
@@ -143,7 +149,7 @@ async def main() -> None:
                             bot,
                             polling_timeout=10,
                             handle_as_tasks=False,
-                            drop_pending_updates=True
+                            drop_pending_updates=True,
                         )
                         break
                     except Exception as e:
@@ -154,12 +160,22 @@ async def main() -> None:
                                 "Bot conflict detected, retrying",
                                 error=str(e),
                                 retry=retry_count,
-                                wait_time=wait_time
+                                wait_time=wait_time,
                             )
                             if retry_count >= max_retries:
                                 logger.error(
-                                    "Max retries reached. Another bot instance is running with the same token. "
-                                    "Please stop other instances or check Railway deployments."
+                                    "🚨 POLLING CONFLICTS DETECTED! 🚨\n"
+                                    "Multiple bot instances are running with the same token.\n\n"
+                                    "SOLUTIONS:\n"
+                                    "1. USE WEBHOOK MODE (recommended):\n"
+                                    "   Add to Railway Variables:\n"
+                                    "   USE_WEBHOOK=true\n"
+                                    "   WEBHOOK_URL=https://your-domain.railway.app\n\n"
+                                    "2. STOP OTHER DEPLOYMENTS:\n"
+                                    "   Railway Dashboard → Deployments → Stop All → Redeploy one\n\n"
+                                    "3. CREATE NEW BOT TOKEN:\n"
+                                    "   @BotFather → /mybots → Revoke & Generate new token\n\n"
+                                    "See URGENT_FIX.md for detailed instructions."
                                 )
                                 raise
                             await asyncio.sleep(wait_time)

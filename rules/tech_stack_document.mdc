@@ -1,0 +1,15 @@
+---
+
+description: "Tech stack for Telegram decision bot"
+alwaysApply: true
+globs: \["\*\*/\*"]
+-------------------
+
+| Layer            | Library / Service (version)      | Purpose                                                         | Docs                                                                                           |
+| ---------------- | -------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Runtime          | Python 3.12                      | Primary runtime language executing bot logic                    | [https://www.python.org/doc/](https://www.python.org/doc/)                                     |
+| Bot SDK          | aiogram 3.4.1                    | Async Telegram Bot API wrapper for handling updates & messaging | [https://docs.aiogram.dev/en/latest/](https://docs.aiogram.dev/en/latest/)                     |
+| OpenAI SDK       | openai 1.7.2                     | Client for calling GPT‑4.1‑mini completions                     | [https://github.com/openai/openai-python](https://github.com/openai/openai-python)             |
+| Database         | Railway Postgres (PostgreSQL 16) | Persist votes & session data (needed for v1.1)                  | [https://docs.railway.app/databases/postgresql](https://docs.railway.app/databases/postgresql) |
+| Deployment       | Railway (Nix Pack)               | Build & host the bot with CI/CD and environment secrets         | [https://docs.railway.app/](https://docs.railway.app/)                                         |
+| Linter/Formatter | ruff 0.4.4 / black 24.4.2        | ruff enforces style & detects issues; black auto‑formats code   | [https://docs.astral.sh/ruff/](https://docs.astral.sh/ruff/)                                   |

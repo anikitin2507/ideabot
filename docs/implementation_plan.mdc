@@ -1,0 +1,60 @@
+---
+
+description: "Implementation plan for Telegram decision bot"
+alwaysApply: false
+------------------
+
+> **Статусы**: каждая задача имеет статус `TODO`, `IN PROGRESS` или `DONE`. Начинаем работу с **первой невыполненной**.
+
+## Milestone 1 — Bootstrap & Project Skeleton
+
+* TODO: Инициализировать Git‑репозиторий и загрузить в GitHub
+* TODO: Сконфигурировать рабочие ветки `main` и `dev`, защитить `main`
+* TODO: Сгенерировать структуру каталогов из *file\_structure\_document.mdc*
+* TODO: Добавить `pyproject.toml` с ruff/black, настроить pre‑commit хуки
+* TODO: Создать `Dockerfile` и `.dockerignore` для локального окружения
+* TODO: Подготовить `.env.example` и описать переменные окружения в README
+* TODO: Настроить CI GitHub Actions: install → lint → tests
+* TODO: Добавить базовый тест `tests/test_smoke.py` (pytest) для проверки импорта
+
+## Milestone 2 — MVP Bot (v1.0)
+
+* TODO: Создать `main.py`; инициализировать aiogram Bot / Dispatcher
+* TODO: Реализовать парсер вариантов (минимум 2) из текстового сообщения
+* TODO: Интеграция OpenAI (GPT‑4.1‑mini) в `src/services/openai_client.py`
+* TODO: Написать обработчик `DecisionHandler` → формирует краткий совет
+* TODO: Добавить обработку ошибок OpenAI и Telegram
+* TODO: Настроить логирование (structlog) и metrics stub
+* TODO: Покрыть ключевые функции тестами (pytest + `pytest-asyncio`)
+
+## Milestone 3 — Deployment & Monitoring
+
+* TODO: Создать Railway проект, подключить GitHub репозиторий
+* TODO: Настроить Nix Pack или Docker‑based build в `railway.json`
+* TODO: Задать переменные окружения (OPENAI\_API\_KEY, BOT\_TOKEN…) в Railway
+* TODO: Развернуть бота (webhook или polling job) и проверить работоспособность
+* TODO: Подключить Postgres плагин (готово к v1.1) и выполнить миграцию `alembic init`
+* TODO: Настроить Healthcheck endpoint и алерты Railway
+
+## Milestone 4 — Голосование (v1.1)
+
+* TODO: Разработать pydantic‑модели `Vote`, `DecisionSession`
+* TODO: Реализовать inline‑кнопки с вариантами (`aiogram.types.InlineKeyboardMarkup`)
+* TODO: Обработать callback‑query для подсчёта голосов
+* TODO: Хранить проголосовавших пользователей и результат в Postgres через `SQLModel`
+* TODO: Изменить вызов OpenAI: передавать top‑N популярный выбор как контекст
+* TODO: Написать дополнительные тесты и обновить документацию
+
+---
+
+### Acceptance Checklist
+
+* [ ] Репозиторий создан, CI проходит без ошибок
+* [ ] MVP бот отвечает корректно на запрос «X или Y?» в личном чате
+* [ ] Логи отражают входной запрос, выбор, причину, latency
+* [ ] Деплой на Railway воспроизводим одной командой `git push`
+* [ ] Для v1.1: результаты голосования сохраняются, бот выдаёт финальный совет
+
+---
+
+> **@Cursor**: После завершения задачи поменяй её статус на DONE и добавь краткий маркер «// done by Cursor» с описанием, что именно сделано.

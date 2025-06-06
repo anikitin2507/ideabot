@@ -1,0 +1,44 @@
+---
+
+description: "Target file structure"
+alwaysApply: true
+-----------------
+
+### Папка → назначение
+
+| Папка                | Назначение                                          |
+| -------------------- | --------------------------------------------------- |
+| `src/`               | Исходный код проекта                                |
+| `src/bot/`           | Логика Telegram‑бота (handlers, routers, keyboards) |
+| `src/services/`      | Интеграции с внешними API (OpenAI, БД)              |
+| `src/utils/`         | Общие утилиты и вспомогательные функции             |
+| `src/models/`        | ORM‑модели и pydantic‑схемы данных                  |
+| `tests/`             | Модульные и интеграционные тесты                    |
+| `config/`            | Конфигурационные файлы и `*.env.example`            |
+| `.github/workflows/` | CI/CD пайплайны GitHub Actions                      |
+| `migrations/`        | Alembic или SQL миграции БД                         |
+| `docs/`              | Дополнительная документация                         |
+| `deploy/`            | Скрипты и шаблоны деплоя на Railway                 |
+
+---
+
+### Главные файлы
+
+* `main.py` — точка входа; инициализирует aiogram‑бота и запускает polling/webhook.
+* `requirements.txt` — список зависимостей Python.
+* `pyproject.toml` — конфигурация ruff, black и build metadata.
+* `Dockerfile` — контейнер локальной разработки.
+* `README.md` — краткая инструкция по установке и деплою.
+* `.env.example` — шаблон переменных окружения.
+
+---
+
+### Генерируй новые файлы здесь
+
+* `src/bot/`
+* `src/services/`
+* `src/utils/`
+* `src/models/`
+* `tests/`
+* `docs/`
+* `deploy/`

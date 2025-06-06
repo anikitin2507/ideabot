@@ -16,9 +16,10 @@ def test_import_main():
 def test_import_config():
     """Test that config module can be imported."""
     try:
-        from src.config import Config
+        from src.config import Config, create_config
 
         assert Config is not None
+        assert create_config is not None
     except ImportError as e:
         pytest.fail(f"Failed to import Config: {e}")
 

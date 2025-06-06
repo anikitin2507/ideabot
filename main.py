@@ -10,7 +10,7 @@ from aiogram.enums import ParseMode
 from aiohttp import web
 from dotenv import load_dotenv
 
-from src.config import Config
+from src.config import create_config
 from src.handlers.decision_handler import DecisionHandler
 
 
@@ -44,8 +44,8 @@ async def main() -> None:
 
     logger = structlog.get_logger()
 
-    # Initialize configuration
-    config = Config()
+    # Initialize configuration with better error handling
+    config = create_config()
 
     # Initialize bot and dispatcher
     bot = Bot(

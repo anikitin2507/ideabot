@@ -5,7 +5,7 @@ from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.types import Message
 
-from src.config import Config
+from src.config import create_config
 from src.services.openai_client import OpenAIClient
 from src.services.option_parser import OptionParser
 
@@ -18,7 +18,7 @@ class DecisionHandler:
     def __init__(self):
         """Initialize the decision handler."""
         self.router = Router()
-        self.config = Config()
+        self.config = create_config()
         self.option_parser = OptionParser(max_options=self.config.max_options)
         self.openai_client = OpenAIClient(self.config)
 

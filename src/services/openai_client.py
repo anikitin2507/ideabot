@@ -1,6 +1,7 @@
-"""OpenAI client for generating decision advice."""
+"""LLM client for generating decision advice (supports OpenRouter and OpenAI)."""
 
 import asyncio
+import httpx
 
 import openai
 import structlog
@@ -11,13 +12,18 @@ from src.config import Config
 logger = structlog.get_logger()
 
 
-class OpenAIClient:
-    """Client for interacting with OpenAI API to generate decision advice."""
+class LLMClient:
+    """Client for interacting with LLM APIs to generate decision advice."""
 
     def __init__(self, config: Config):
-        """Initialize the OpenAI client."""
+        """Initialize the LLM client."""
         self.config = config
-        self.client = AsyncOpenAI(api_key=config.openai_api_key)
+        
+        # Configure OpenAI client with appropriate base URL and API key
+        self.client = AsyncOpenAI(
+            api_key=config.api_key,
+            base_url=config.api_base if config.api_type == "openrouter" else None
+        )
 
     async def get_decision_advice(
         self,
@@ -40,29 +46,42 @@ class OpenAIClient:
             prompt = self._build_prompt(options, context, vote_results)
 
             logger.info(
-                "Requesting decision advice from OpenAI",
-                model=self.config.openai_model,
+                "Requesting decision advice from LLM",
+                api_type=self.config.api_type,
+                model=self.config.model,
                 options_count=len(options),
             )
 
-            response = await self.client.chat.completions.create(
-                model=self.config.openai_model,
-                messages=[
+            # Build request parameters
+            params = {
+                "model": self.config.model,
+                "messages": [
                     {"role": "system", "content": self._get_system_prompt()},
                     {"role": "user", "content": prompt},
                 ],
-                max_tokens=150,
-                temperature=0.7,
-                timeout=self.config.response_timeout,
-            )
+                "max_tokens": 150,
+                "temperature": 0.7,
+                "timeout": self.config.response_timeout,
+            }
+            
+            # Add OpenRouter specific headers if needed
+            headers = {}
+            if self.config.api_type == "openrouter":
+                headers = {
+                    "HTTP-Referer": "https://github.com/anikitin2507/ideabot",
+                    "X-Title": "Decision Bot"
+                }
+                params["headers"] = headers
+
+            response = await self.client.chat.completions.create(**params)
 
             if not response.choices:
-                logger.error("No choices in OpenAI response")
+                logger.error("No choices in LLM response")
                 return None
 
             advice = response.choices[0].message.content
             if not advice:
-                logger.error("Empty content in OpenAI response")
+                logger.error("Empty content in LLM response")
                 return None
 
             advice = advice.strip()
@@ -76,19 +95,23 @@ class OpenAIClient:
             return advice
 
         except openai.RateLimitError as e:
-            logger.error("OpenAI rate limit exceeded", error=str(e))
+            logger.error("LLM rate limit exceeded", error=str(e))
             return "🚫 Извините, превышен лимит запросов к AI. Попробуйте позже."
 
         except openai.APIError as e:
-            logger.error("OpenAI API error", error=str(e))
+            logger.error("LLM API error", error=str(e))
             return "🚫 Ошибка AI сервиса. Попробуйте позже."
 
+        except httpx.TimeoutException:
+            logger.error("LLM request timeout")
+            return "⏰ Превышено время ожидания ответа AI. Попробуйте позже."
+
         except asyncio.TimeoutError:
-            logger.error("OpenAI request timeout")
+            logger.error("LLM request timeout")
             return "⏰ Превышено время ожидания ответа AI. Попробуйте позже."
 
         except Exception as e:
-            logger.error("Unexpected error in OpenAI client", error=str(e))
+            logger.error("Unexpected error in LLM client", error=str(e), error_type=type(e).__name__)
             return "🚫 Произошла ошибка при генерации совета. Попробуйте позже."
 
     def _get_system_prompt(self) -> str:
@@ -134,3 +157,7 @@ class OpenAIClient:
             prompt_parts.append(f"\nДополнительный контекст: {context}")
 
         return "\n".join(prompt_parts)
+
+
+# For backward compatibility
+OpenAIClient = LLMClient

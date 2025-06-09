@@ -10,10 +10,10 @@
 2. Отправьте `/newbot` и следуйте инструкциям
 3. **Сохраните токен** - понадобится для Railway
 
-### 2. Получите OpenAI API Key
-1. Перейдите на [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+### 2. Получите OpenRouter API Key
+1. Перейдите на [openrouter.ai](https://openrouter.ai)
 2. Войдите или зарегистрируйтесь
-3. Создайте новый API ключ
+3. В разделе API Keys создайте новый ключ
 4. **Сохраните ключ** - понадобится для Railway
 
 ### 3. Деплой на Railway
@@ -29,12 +29,14 @@
 **Обязательные:**
 ```
 BOT_TOKEN=YOUR_TELEGRAM_BOT_TOKEN
-OPENAI_API_KEY=YOUR_OPENAI_API_KEY
+API_KEY=YOUR_OPENROUTER_API_KEY
 ```
 
 **Дополнительные (рекомендуемые):**
 ```
-OPENAI_MODEL=gpt-4.1-mini
+API_TYPE=openrouter
+API_BASE=https://openrouter.ai/api/v1
+MODEL=gpt-4.1-mini
 MAX_OPTIONS=5
 RESPONSE_TIMEOUT=30
 LOG_LEVEL=INFO
@@ -59,7 +61,7 @@ WEBHOOK_URL=https://YOUR-RAILWAY-DOMAIN.railway.app
 ✅ **Docker конфигурация** - автоматическая сборка  
 ✅ **Health check endpoint** - мониторинг Railway  
 ✅ **Структурированные логи** - для отладки  
-✅ **Обработка ошибок** - fallback при сбоях OpenAI  
+✅ **Обработка ошибок** - fallback при сбоях API  
 ✅ **CI/CD pipeline** - автоматическое тестирование  
 ✅ **Автодеплой** - каждый git push обновляет бота  
 

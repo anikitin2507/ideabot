@@ -1,22 +1,23 @@
-# 🔧 Исправление ошибки BOT_TOKEN в Railway
+# �� Исправление ошибки API_KEY в Railway
 
 ## ❌ Проблема
 ```
 ValidationError: 1 validation error for Config
-bot_token
-  Field required [type=missing, input_value={'openai_api_key': 'sk-pr...'}]
+api_key
+  Field required [type=missing, input_value={'bot_token': '123456...'}]
 ```
 
 ## 🚨 Причина
-В Railway не настроена переменная окружения `BOT_TOKEN`
+В Railway не настроена переменная окружения `API_KEY`
 
 ## ✅ Решение (2 минуты)
 
-### Шаг 1: Получите Telegram Bot Token
-1. Найдите [@BotFather](https://t.me/botfather) в Telegram
-2. Отправьте `/newbot`
-3. Следуйте инструкциям для создания бота
-4. **Скопируйте токен** - выглядит как `123456789:ABCDEF...`
+### Шаг 1: Получите API ключ
+1. Перейдите на [openrouter.ai](https://openrouter.ai)
+2. Войдите или зарегистрируйтесь
+3. Перейдите в раздел "API Keys"
+4. Создайте новый ключ
+5. **Скопируйте ключ**
 
 ### Шаг 2: Добавьте переменную в Railway
 1. Откройте ваш проект в [Railway Dashboard](https://railway.app/dashboard)
@@ -24,8 +25,8 @@ bot_token
 3. Нажмите **"New Variable"**
 4. Добавьте:
    ```
-   Name: BOT_TOKEN
-   Value: ВАШ_ТОКЕН_ОТ_BOTFATHER
+   Name: API_KEY
+   Value: ВАШ_КЛЮЧ_ОТ_OPENROUTER
    ```
 5. Нажмите **"Add"**
 
@@ -39,8 +40,10 @@ bot_token
 
 ```
 BOT_TOKEN=your_telegram_bot_token_here
-OPENAI_API_KEY=your_openai_api_key_here
-OPENAI_MODEL=gpt-4.1-mini
+API_KEY=your_openrouter_api_key_here
+API_TYPE=openrouter
+API_BASE=https://openrouter.ai/api/v1
+MODEL=gpt-4.1-mini
 MAX_OPTIONS=5
 RESPONSE_TIMEOUT=30
 LOG_LEVEL=INFO
@@ -59,7 +62,7 @@ LOG_LEVEL=INFO
 
 ### Variables Tab
 - ✅ `BOT_TOKEN` - есть и не пустой
-- ✅ `OPENAI_API_KEY` - есть и начинается с `sk-`
+- ✅ `API_KEY` - есть и не пустой
 
 ### Deployments Tab
 - ✅ Последний деплой успешен (зеленый статус)
@@ -73,7 +76,7 @@ LOG_LEVEL=INFO
 
 1. **Проверьте формат токена:**
    - Telegram токен: `123456789:ABCDEF1234567890...`
-   - OpenAI ключ: `sk-proj-...` или `sk-...`
+   - OpenRouter ключ: должен быть действительным
 
 2. **Пересоздайте переменные:**
    - Удалите старые переменные

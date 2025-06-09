@@ -16,11 +16,13 @@ class Config(BaseSettings):
     # Telegram Bot Token
     bot_token: str = Field(..., env="BOT_TOKEN", description="Telegram Bot Token from @BotFather")
 
-    # OpenAI API Key
-    openai_api_key: str = Field(..., env="OPENAI_API_KEY", description="OpenAI API Key")
-
-    # OpenAI Model Configuration
-    openai_model: str = Field(default="gpt-4.1-mini", env="OPENAI_MODEL")
+    # LLM API Configuration
+    api_type: str = Field(default="openrouter", env="API_TYPE")
+    api_key: str = Field(..., env="API_KEY", description="API Key (OpenRouter or OpenAI)")
+    api_base: str = Field(default="https://openrouter.ai/api/v1", env="API_BASE", description="API Base URL")
+    
+    # Model Configuration
+    model: str = Field(default="gpt-4.1-mini", env="MODEL")
 
     # Database Configuration (for v1.1)
     database_url: str | None = Field(default=None, env="DATABASE_URL")
@@ -45,12 +47,12 @@ class Config(BaseSettings):
             raise ValueError("Invalid BOT_TOKEN format. Should be from @BotFather")
         return v
 
-    @field_validator("openai_api_key")
+    @field_validator("api_key")
     @classmethod
-    def validate_openai_key(cls, v: str) -> str:
-        """Validate OpenAI API Key format."""
-        if not v or not v.startswith(("sk-", "sk-proj-")):
-            raise ValueError("Invalid OPENAI_API_KEY format. Should start with 'sk-'")
+    def validate_api_key(cls, v: str) -> str:
+        """Validate API Key format."""
+        if not v or len(v) < 10:
+            raise ValueError("Invalid API_KEY format")
         return v
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
@@ -74,8 +76,8 @@ def create_config() -> Config:
             if error_type == "missing":
                 if field_name == "bot_token":
                     missing_vars.append("BOT_TOKEN - Get it from @BotFather in Telegram")
-                elif field_name == "openai_api_key":
-                    missing_vars.append("OPENAI_API_KEY - Get it from platform.openai.com/api-keys")
+                elif field_name == "api_key":
+                    missing_vars.append("API_KEY - Get it from openrouter.ai/keys")
                 else:
                     missing_vars.append(f"{field_name.upper()}")
             else:

@@ -6,7 +6,7 @@ from aiogram.filters import Command
 from aiogram.types import Message
 
 from src.config import create_config
-from src.services.openai_client import OpenAIClient
+from src.services.openai_client import LLMClient
 from src.services.option_parser import OptionParser
 
 logger = structlog.get_logger()
@@ -20,7 +20,7 @@ class DecisionHandler:
         self.router = Router()
         self.config = create_config()
         self.option_parser = OptionParser(max_options=self.config.max_options)
-        self.openai_client = OpenAIClient(self.config)
+        self.openai_client = LLMClient(self.config)
 
         # Register message handlers
         self.router.message(Command("start"))(self.start_command)

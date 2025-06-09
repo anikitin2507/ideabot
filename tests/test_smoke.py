@@ -34,14 +34,14 @@ def test_import_option_parser():
         pytest.fail(f"Failed to import OptionParser: {e}")
 
 
-def test_import_openai_client():
-    """Test that OpenAI client can be imported."""
+def test_import_llm_client():
+    """Test that LLM client can be imported."""
     try:
-        from src.services.openai_client import OpenAIClient
+        from src.services.openai_client import LLMClient
 
-        assert OpenAIClient is not None
+        assert LLMClient is not None
     except ImportError as e:
-        pytest.fail(f"Failed to import OpenAIClient: {e}")
+        pytest.fail(f"Failed to import LLMClient: {e}")
 
 
 def test_import_decision_handler():
